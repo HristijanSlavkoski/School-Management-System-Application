@@ -1,0 +1,89 @@
+﻿@model School_Management_System_Application.Models.Enrollment
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Enrollment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="enrollmentId" />
+            <div class="form-group">
+                <label asp-for="courseId" class="control-label"></label>
+                <select asp-for="courseId" class="form-control" asp-items="ViewBag.courseId"></select>
+                <span asp-validation-for="courseId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="studentId" class="control-label"></label>
+                <select asp-for="studentId" class="form-control" asp-items="ViewBag.studentId"></select>
+                <span asp-validation-for="studentId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="semester" class="control-label"></label>
+                <input asp-for="semester" class="form-control" />
+                <span asp-validation-for="semester" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="year" class="control-label"></label>
+                <input asp-for="year" class="form-control" />
+                <span asp-validation-for="year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="grade" class="control-label"></label>
+                <input asp-for="grade" class="form-control" />
+                <span asp-validation-for="grade" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="seminalUrl" class="control-label"></label>
+                <input asp-for="seminalUrl" class="form-control" />
+                <span asp-validation-for="seminalUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="projectUrl" class="control-label"></label>
+                <input asp-for="projectUrl" class="form-control" />
+                <span asp-validation-for="projectUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="examPoints" class="control-label"></label>
+                <input asp-for="examPoints" class="form-control" />
+                <span asp-validation-for="examPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="seminalPoints" class="control-label"></label>
+                <input asp-for="seminalPoints" class="form-control" />
+                <span asp-validation-for="seminalPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="projectPoints" class="control-label"></label>
+                <input asp-for="projectPoints" class="form-control" />
+                <span asp-validation-for="projectPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="additionalPoints" class="control-label"></label>
+                <input asp-for="additionalPoints" class="form-control" />
+                <span asp-validation-for="additionalPoints" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="finishDate" class="control-label"></label>
+                <input asp-for="finishDate" class="form-control" />
+                <span asp-validation-for="finishDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
