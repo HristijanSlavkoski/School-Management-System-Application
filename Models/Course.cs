@@ -38,6 +38,6 @@ namespace School_Management_System_Application.Models
         public int? secondTeacherId { get; set; }
         public Teacher? secondTeacher { get; set; }
 
-        public ICollection<Enrollment> enrollments { get; set; }
+        public ICollection<Enrollment>? enrollments { get; set; }
     }
 }

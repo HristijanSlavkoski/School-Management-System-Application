@@ -31,7 +31,7 @@ namespace School_Management_System_Application.Controllers
             {
                 coursesQuery = coursesQuery.Where(x => x.title.Contains(title));
             }
-            if (semester!=null && semester!=0)
+            if (semester != null && semester != 0)
             {
                 coursesQuery = coursesQuery.Where(s => s.semester == semester);
             }
@@ -45,7 +45,7 @@ namespace School_Management_System_Application.Controllers
                 programmes = new SelectList(await programmesQuery.ToListAsync()),
                 semesters = new SelectList(await semestersQuery.ToListAsync())
             };
-            
+
             return View(CoursefilterVM);
         }
 
@@ -74,7 +74,6 @@ namespace School_Management_System_Application.Controllers
         {
             ViewData["Teachers"] = new SelectList(_context.Set<Teacher>(), "teacherId", "fullName");
             ViewData["Students"] = new SelectList(_context.Set<Student>(), "Id", "fullName");
-            //ViewData["Students"] = new SelectList(_context.Set<Enrollment>(), "enrollmentId", "studentId");
             return View();
         }
 
@@ -83,54 +82,16 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("courses, students")] CreateCourse course)
         public async Task<IActionResult> Create([Bind("courseId,title,credits,semester,programme,educationLevel,firstTeacherId,firstTeacher,secondTeacherId,secondTeacher,enrollments")] Course course)
         {
-            /*            _context.Add(course.courses);
-                        await _context.SaveChangesAsync();
-                        IQueryable<Course> coursesQuery = _context.Course.AsQueryable();*/
-            /*            _context.Enrollment.AddRange(
-                            new Enrollment
-                            {
-                                courseId = _context.Course.FirstOrDefault(d => d.title == course.title).courseId,
-                                studentId = _context.Student.Single(d => d.firstName == "Dimitar" && d.lastName == "Dimitrijoski").Id,
-                            }
-                        );
-            */
-
-
-
-
-
             if (ModelState.IsValid)
             {
-
-                //Console.WriteLine(okkk[0].courseId);
-                //string naaame = "HI";
-
-               /* _context.Enrollment.AddRange(
-                    new Enrollment
-                    {
-                        courseId = _context.Course.FirstOrDefault(d => d.title == course.title).courseId,
-                        studentId = _context.Student.Single(d => d.firstName == "Dimitar" && d.lastName == "Dimitrijoski").Id,
-                    }
-                );*/
                 _context.Add(course);
                 await _context.SaveChangesAsync();
-               /* ICollection<Enrollment> okk2k = course.enrollments;
-                Console.WriteLine(okk2k);*/
                 return RedirectToAction(nameof(Index));
             }
-
-
-            /*            var CreateCourse = new CreateCourse
-                        {
-                            courses = await coursesQuery.Include(c => c.firstTeacher).Include(c => c.secondTeacher).ToListAsync(),
-                            studentsEnrolled = course.studentsEnrolled
-                        };
-
-                        return View(CreateCourse);*/
-
+            ViewData["Teachers"] = new SelectList(_context.Set<Teacher>(), "teacherId", "fullName");
+            ViewData["Students"] = new SelectList(_context.Set<Student>(), "Id", "fullName");
             return View(course);
         }
 
@@ -142,14 +103,26 @@ namespace School_Management_System_Application.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Course.FindAsync(id);
+            var course = _context.Course.Where(m => m.courseId == id).First();
+            IQueryable<Course> coursesQuery = _context.Course.AsQueryable();
+            coursesQuery = coursesQuery.Where(m => m.courseId == id);
             if (course == null)
             {
                 return NotFound();
             }
+            var students = _context.Student.AsEnumerable();
+            students = students.OrderBy(s => s.fullName);
+
+            CreateCourse viewmodel = new CreateCourse
+            {
+                course = await coursesQuery.Include(c => c.firstTeacher).Include(c => c.secondTeacher).FirstAsync(),
+                studentsEnrolled = new MultiSelectList(students, "Id", "fullName"),
+                selectedStudents = students.Select(sa => sa.Id)
+            };
+
             ViewData["Teachers"] = new SelectList(_context.Set<Teacher>(), "teacherId", "fullName");
-            ViewData["Students"] = new SelectList(_context.Set<Student>(), "Id", "fullName");
-            return View(course);
+            ViewData["Students"] = new SelectList(_context.Set<Student>(), "Id", "fullName", course.enrollments);
+            return View(viewmodel);
         }
 
         // POST: Courses/Edit/5
@@ -157,9 +130,9 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("courseId,title,credits,semester,programme,educationLevel,firstTeacherId,firstTeacher,secondTeacherId,secondTeacher,enrollments")] Course course)
+        public async Task<IActionResult> Edit(int id, CreateCourse viewmodel)
         {
-            if (id != course.courseId)
+            if (id != viewmodel.course.courseId)
             {
                 return NotFound();
             }
@@ -168,12 +141,33 @@ namespace School_Management_System_Application.Controllers
             {
                 try
                 {
-                    _context.Update(course);
+                    _context.Update(viewmodel.course);
+
                     await _context.SaveChangesAsync();
+                    IEnumerable<long> selectedStudents = viewmodel.selectedStudents;
+                    if (selectedStudents != null)
+                    {
+                        IQueryable<Enrollment> toBeRemoved = _context.Enrollment.Where(s => !selectedStudents.Contains(s.studentId) && s.courseId == id);
+                        _context.Enrollment.RemoveRange(toBeRemoved);
+
+                        IEnumerable<long> existEnrollments = _context.Enrollment.Where(s => selectedStudents.Contains(s.studentId) && s.courseId == id).Select(s => s.studentId);
+                        IEnumerable<long> newEnrollments = selectedStudents.Where(s => !existEnrollments.Contains(s));
+
+                        foreach (int studentId in newEnrollments)
+                            _context.Enrollment.Add(new Enrollment { studentId = studentId, courseId = id });
+
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        IQueryable<Enrollment> toBeRemoved = _context.Enrollment.Where(s => s.courseId == id);
+                        _context.Enrollment.RemoveRange(toBeRemoved);
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CourseExists(course.courseId))
+                    if (!CourseExists(viewmodel.course.courseId))
                     {
                         return NotFound();
                     }
@@ -184,7 +178,7 @@ namespace School_Management_System_Application.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View(viewmodel);
         }
 
         // GET: Courses/Delete/5
@@ -229,12 +223,10 @@ namespace School_Management_System_Application.Controllers
             {
                 return NotFound();
             }
-            
+
             var teacher = await _context.Teacher
                 .FirstOrDefaultAsync(m => m.teacherId == id);
             ViewBag.Message = teacher.fullName;
-            /*var courses = await _context.Course
-                .FirstOrDefaultAsync(m => m.firstTeacherId == id || m.secondTeacherId == id);*/
             IQueryable<Course> coursesQuery = _context.Course.Where(m => m.firstTeacherId == id || m.secondTeacherId == id);
             await _context.SaveChangesAsync();
             if (teacher == null)
@@ -245,7 +237,7 @@ namespace School_Management_System_Application.Controllers
             {
                 courses = await coursesQuery.ToListAsync(),
             };
-            
+
             return View(CourseTitleVM);
         }
     }

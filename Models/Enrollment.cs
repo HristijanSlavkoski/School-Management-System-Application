@@ -54,6 +54,14 @@ namespace School_Management_System_Application.Models
         {
             get
             {
+                if (examPoints == null)
+                    examPoints = 0;
+                if (seminalPoints == null)
+                    seminalPoints = 0;
+                if (projectPoints == null)
+                    projectPoints = 0;
+                if (additionalPoints == null)
+                    additionalPoints = 0;
                 int points = (int)(examPoints + seminalPoints + projectPoints + additionalPoints);
                 return (int)points;
             }
