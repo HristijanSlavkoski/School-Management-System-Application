@@ -9,12 +9,12 @@ namespace School_Management_System_Application.Models
         [Display(Name = "Course")]
         public int courseId { get; set; }
         [Display(Name = "Course")]
-        public Course course { get; set; }
+        public Course? course { get; set; }
 
         [Display(Name = "Student")]
         public long studentId { get; set; }
         [Display(Name = "Student")]
-        public Student student { get; set; }
+        public Student? student { get; set; }
 
         [Display(Name = "Semester")]
         public int? semester { get; set; }
