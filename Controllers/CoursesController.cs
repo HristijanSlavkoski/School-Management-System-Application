@@ -103,7 +103,7 @@ namespace School_Management_System_Application.Controllers
                 return NotFound();
             }
 
-            var course = _context.Course.Where(m => m.courseId == id).First();
+            var course = _context.Course.Where(m => m.courseId == id).Include(x => x.enrollments).First();
             IQueryable<Course> coursesQuery = _context.Course.AsQueryable();
             coursesQuery = coursesQuery.Where(m => m.courseId == id);
             if (course == null)
@@ -113,15 +113,15 @@ namespace School_Management_System_Application.Controllers
             var students = _context.Student.AsEnumerable();
             students = students.OrderBy(s => s.fullName);
 
-            CreateCourse viewmodel = new CreateCourse
+            EnrollStudentsAtCourseEdit viewmodel = new EnrollStudentsAtCourseEdit
             {
                 course = await coursesQuery.Include(c => c.firstTeacher).Include(c => c.secondTeacher).FirstAsync(),
-                studentsEnrolled = new MultiSelectList(students, "Id", "fullName"),
-                selectedStudents = students.Select(sa => sa.Id)
+                studentsEnrolledList = new MultiSelectList(students, "Id", "fullName"),
+                selectedStudents = course.enrollments.Select(sa => sa.studentId)
             };
 
             ViewData["Teachers"] = new SelectList(_context.Set<Teacher>(), "teacherId", "fullName");
-            ViewData["Students"] = new SelectList(_context.Set<Student>(), "Id", "fullName", course.enrollments);
+            //ViewData["Students"] = new SelectList(_context.Set<Student>(), "Id", "fullName", course.enrollments);
             return View(viewmodel);
         }
 
@@ -130,7 +130,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CreateCourse viewmodel)
+        public async Task<IActionResult> Edit(int id, EnrollStudentsAtCourseEdit viewmodel)
         {
             if (id != viewmodel.course.courseId)
             {
@@ -142,8 +142,18 @@ namespace School_Management_System_Application.Controllers
                 try
                 {
                     _context.Update(viewmodel.course);
-
                     await _context.SaveChangesAsync();
+
+                    var course = _context.Course.Where(m => m.courseId == id).First();
+                    string semester;
+                    if (course.semester % 2 == 0)
+                    {
+                        semester = "leten";
+                    }
+                    else
+                    {
+                        semester = "zimski";
+                    }
                     IEnumerable<long> selectedStudents = viewmodel.selectedStudents;
                     if (selectedStudents != null)
                     {
@@ -154,7 +164,7 @@ namespace School_Management_System_Application.Controllers
                         IEnumerable<long> newEnrollments = selectedStudents.Where(s => !existEnrollments.Contains(s));
 
                         foreach (int studentId in newEnrollments)
-                            _context.Enrollment.Add(new Enrollment { studentId = studentId, courseId = id });
+                            _context.Enrollment.Add(new Enrollment { studentId = studentId, courseId = id , semester = semester, year = viewmodel.year});
 
                         await _context.SaveChangesAsync();
                     }

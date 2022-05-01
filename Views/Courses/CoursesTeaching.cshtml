@@ -26,10 +26,7 @@
                 @Html.DisplayNameFor(model => model.courses[0].educationLevel)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.courses[0].firstTeacherId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.courses[0].secondTeacherId)
+                Students Enrolled
             </th>
             <th></th>
         </tr>
@@ -54,10 +51,9 @@
                     @Html.DisplayFor(modelItem => item.educationLevel)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.firstTeacherId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.secondTeacherId)
+                    <a asp-controller="Enrollments" asp-action="StudentsEnrolledAtCourse" asp-route-id="@item.courseId" asp-route-teacher="@ViewBag.Message">
+                        Check Students Enrolled
+                     </a>
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.courseId">Edit</a> |

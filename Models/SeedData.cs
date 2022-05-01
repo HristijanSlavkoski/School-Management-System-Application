@@ -166,7 +166,7 @@ namespace School_Management_System_Application.Models
                     {
                         courseId = context.Course.Single(d => d.title == "OWEB").courseId,
                         studentId = context.Student.Single(d => d.firstName == "Dimitar" && d.lastName == "Dimitrijoski").Id,
-                        semester = 1,
+                        semester = "zemski",
                         year = 2021,
                         grade = 8,
                         seminalUrl = "github",
@@ -181,7 +181,7 @@ namespace School_Management_System_Application.Models
                     {
                         courseId = context.Course.Single(d => d.title == "OWEB").courseId,
                         studentId = context.Student.Single(d => d.firstName == "Petar" && d.lastName == "Petreski").Id,
-                        semester = 1,
+                        semester = "zimski",
                         year = 2021,
                         grade = 6,
                         seminalUrl = "github",
@@ -196,7 +196,7 @@ namespace School_Management_System_Application.Models
                     {
                         courseId = context.Course.Single(d => d.title == "RSWEB").courseId,
                         studentId = context.Student.Single(d => d.firstName == "Stojan" && d.lastName == "Stojanoski").Id,
-                        semester = 6,
+                        semester = "leten",
                         year = 2021,
                         grade = 10,
                         seminalUrl = "github",
@@ -211,7 +211,7 @@ namespace School_Management_System_Application.Models
                     {
                         courseId = context.Course.Single(d => d.title == "OWEB").courseId,
                         studentId = context.Student.Single(d => d.firstName == "Ilina" && d.lastName == "Naumoska").Id,
-                        semester = 7,
+                        semester = "zimski",
                         year = 2021,
                         grade = 9,
                         seminalUrl = "github",
@@ -226,7 +226,7 @@ namespace School_Management_System_Application.Models
                     {
                         courseId = context.Course.Single(d => d.title == "Matematika 1").courseId,
                         studentId = context.Student.Single(d => d.firstName == "Marija" && d.lastName == "Mitreska").Id,
-                        semester = 7,
+                        semester = "zimski",
                         year = 2021,
                         grade = 5,
                         seminalUrl = "github",

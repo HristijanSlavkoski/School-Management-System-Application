@@ -94,8 +94,8 @@ namespace School_Management_System_Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int?>("semester")
-                        .HasColumnType("int");
+                    b.Property<string>("semester")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("seminalPoints")
                         .HasColumnType("int");
@@ -150,6 +150,9 @@ namespace School_Management_System_Application.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("profilePicture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("studentId")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -192,6 +195,9 @@ namespace School_Management_System_Application.Migrations
                     b.Property<string>("officeNumber")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("profilePicture")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("teacherId");
 

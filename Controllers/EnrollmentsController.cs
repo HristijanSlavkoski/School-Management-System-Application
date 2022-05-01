@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System_Application.Data;
 using School_Management_System_Application.Models;
+using School_Management_System_Application.ViewModels;
 
 namespace School_Management_System_Application.Controllers
 {
@@ -162,6 +163,108 @@ namespace School_Management_System_Application.Controllers
         private bool EnrollmentExists(long id)
         {
             return _context.Enrollment.Any(e => e.enrollmentId == id);
+        }
+        // GET: Enrollments/StudentsEnrolledAtCourse/5/MarijaStefanoska
+        public async Task<IActionResult> StudentsEnrolledAtCourse(int? id, string teacher, int year)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var course = await _context.Course
+                .FirstOrDefaultAsync(m => m.courseId == id);
+
+            string[] names = teacher.Split(" ");
+            var teacherModel = await _context.Teacher.FirstOrDefaultAsync(m => m.firstName == names[0] && m.lastName == names[1]);
+            ViewBag.teacher = teacher;
+            ViewBag.course = course.title;
+            var enrollment = _context.Enrollment.Where(x => x.courseId == id && (x.course.firstTeacherId == teacherModel.teacherId || x.course.secondTeacherId == teacherModel.teacherId))
+            .Include(e => e.course)
+            .Include(e => e.student);
+            await _context.SaveChangesAsync();
+            IQueryable<int?> yearsQuery = _context.Enrollment.OrderBy(m => m.year).Select(m => m.year).Distinct();
+            IQueryable<Enrollment> enrollmentQuery = enrollment.AsQueryable();
+            if (year != null && year != 0)
+            {
+                enrollmentQuery = enrollmentQuery.Where(x => x.year == year);
+            }
+            else
+            {
+                enrollmentQuery = enrollmentQuery.Where(x => x.year == yearsQuery.Max());
+            }
+            
+            if (enrollment == null)
+            {
+                return NotFound();
+            }
+            
+            EnrollmentFilter viewmodel = new EnrollmentFilter
+            {
+                enrollments = await enrollmentQuery.ToListAsync(),
+                yearsList = new SelectList(await yearsQuery.ToListAsync())
+            };
+
+            return View(viewmodel);
+        }
+
+        //THIS IS FOR TEACHER ROLE
+        // GET: Enrollments/EditTeacher/5
+        public async Task<IActionResult> EditTeacher(long? id, string teacher)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var enrollment = await _context.Enrollment.FindAsync(id);
+            if (enrollment == null)
+            {
+                return NotFound();
+            }
+            ViewBag.teacher = teacher;
+            ViewData["courseId"] = new SelectList(_context.Course, "courseId", "title", enrollment.courseId);
+            ViewData["studentId"] = new SelectList(_context.Student, "Id", "firstName", enrollment.studentId);
+            return View(enrollment);
+        }
+
+        //THIS IS FOR TEACHER ROLE
+        // POST: Enrollments/EditTeacher/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditTeacher(long id, string teacher, [Bind("enrollmentId,courseId,studentId,semester,year,grade,seminalUrl,projectUrl,examPoints,seminalPoints,projectPoints,additionalPoints,finishDate")] Enrollment enrollment)
+        {
+            if (id != enrollment.enrollmentId)
+            {
+                return NotFound();
+            }
+            string temp = teacher;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(enrollment);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EnrollmentExists(enrollment.enrollmentId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("StudentsEnrolledAtCourse", new { id = enrollment.courseId, teacher = temp, year = enrollment.year });
+                //return RedirectToAction(nameof(StudentsEnrolledAtCourse(enrollment.courseId, teacher, (Int32)enrollment.year)));
+            }
+            ViewData["courseId"] = new SelectList(_context.Course, "courseId", "title", enrollment.courseId);
+            ViewData["studentId"] = new SelectList(_context.Student, "Id", "firstName", enrollment.studentId);
+            return View(enrollment);
         }
     }
 }

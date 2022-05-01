@@ -8,7 +8,7 @@ namespace School_Management_System_Application.Models
 
         [StringLength(10, MinimumLength = 3)]
         [Required]
-        [Display(Name = "Student ID")]
+        [Display(Name = "Student Index Card")]
         public string studentId { get; set; }
         
         [StringLength(50, MinimumLength = 3)]
@@ -36,6 +36,8 @@ namespace School_Management_System_Application.Models
         public string? educationLevel { get; set; }
 
         public ICollection<Enrollment>? enrollments { get; set; }
+
+        public string? profilePicture { get; set; }
 
         public string fullName
         {

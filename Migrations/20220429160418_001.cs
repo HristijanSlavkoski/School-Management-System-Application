@@ -21,7 +21,8 @@ namespace School_Management_System_Application.Migrations
                     enrollmentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     acquiredCredits = table.Column<int>(type: "int", nullable: true),
                     currentSemester = table.Column<int>(type: "int", nullable: true),
-                    educationLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true)
+                    educationLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    profilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,7 +40,8 @@ namespace School_Management_System_Application.Migrations
                     degree = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     academicRank = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     officeNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    hireDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    hireDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    profilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -83,7 +85,7 @@ namespace School_Management_System_Application.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     courseId = table.Column<int>(type: "int", nullable: false),
                     studentId = table.Column<long>(type: "bigint", nullable: false),
-                    semester = table.Column<int>(type: "int", nullable: true),
+                    semester = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     year = table.Column<int>(type: "int", nullable: true),
                     grade = table.Column<int>(type: "int", nullable: true),
                     seminalUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),

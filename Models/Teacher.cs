@@ -32,6 +32,8 @@ namespace School_Management_System_Application.Models
         [DataType(DataType.Date)]
         public DateTime? hireDate { get; set; }
 
+        public string? profilePicture { get; set; }
+
         public string fullName
         {
             get

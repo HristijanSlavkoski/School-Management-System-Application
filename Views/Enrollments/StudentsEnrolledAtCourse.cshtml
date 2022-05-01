@@ -1,0 +1,117 @@
+﻿@model School_Management_System_Application.ViewModels.EnrollmentFilter
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Enrolled students at "@ViewBag.course" from teacher "@ViewBag.teacher"</h1>
+
+<form asp-controller="Enrollments" asp-action="StudentsEnrolledAtCourse" asp-route-teacher="@ViewBag.teacher">
+    <p>
+        Year: <select asp-for="year" asp-items="Model.yearsList">
+            <option>Select year</option>
+        </select>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].course)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].student)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].semester)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].year)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].grade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].seminalUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].projectUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].examPoints)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].seminalPoints)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].projectPoints)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].additionalPoints)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].totalPoints)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.enrollments[0].finishDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.enrollments) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.course.title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.student.fullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.semester)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.grade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.seminalUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.projectUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.examPoints)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.seminalPoints)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.projectPoints)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.additionalPoints)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.totalPoints)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.finishDate)
+            </td>
+            <td>
+                @if (item.finishDate == null)
+                {
+                    <a asp-action="EditTeacher" asp-route-id="@item.enrollmentId" asp-route-teacher="@ViewBag.teacher">Edit</a>
+                    <span> |</span>
+                }
+                <a asp-action="Details" asp-route-id="@item.enrollmentId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.enrollmentId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

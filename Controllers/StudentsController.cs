@@ -98,13 +98,24 @@ namespace School_Management_System_Application.Models
                 return NotFound();
             }
 
-            var student = await _context.Student.FindAsync(id);
+            var student = _context.Student.Where(x => x.Id == id).Include(x => x.enrollments).First();
             if (student == null)
             {
                 return NotFound();
             }
+
+            var courses = _context.Course.AsEnumerable();
+            courses = courses.OrderBy(s => s.title);
+
+            EnrollCoursesAtStudentEdit viewmodel = new EnrollCoursesAtStudentEdit
+            {
+                student = student,
+                coursesEnrolledList = new MultiSelectList(courses, "courseId", "title"),
+                selectedCourses = student.enrollments.Select(x => x.courseId)
+            };
+
             ViewData["Courses"] = new SelectList(_context.Set<Course>(), "courseId", "title");
-            return View(student);
+            return View(viewmodel);
         }
 
         // POST: Students/Edit/5
@@ -112,9 +123,9 @@ namespace School_Management_System_Application.Models
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,studentId,firstName,lastName,enrollmentDate,acquiredCredits,currentSemester,educationLevel,enrollments")] Student student)
+        public async Task<IActionResult> Edit(long id, EnrollCoursesAtStudentEdit viewmodel)
         {
-            if (id != student.Id)
+            if (id != viewmodel.student.Id)
             {
                 return NotFound();
             }
@@ -123,12 +134,36 @@ namespace School_Management_System_Application.Models
             {
                 try
                 {
-                    _context.Update(student);
+                    _context.Update(viewmodel.student);
                     await _context.SaveChangesAsync();
+
+                    var student = _context.Student.Where(x => x.Id == id).First();
+
+                    IEnumerable<int> selectedCourses = viewmodel.selectedCourses;
+                    if (selectedCourses != null)
+                    {
+                        IQueryable<Enrollment> toBeRemoved = _context.Enrollment.Where(s => !selectedCourses.Contains(s.courseId) && s.studentId == id);
+                        _context.Enrollment.RemoveRange(toBeRemoved);
+
+                        IEnumerable<int> existEnrollments = _context.Enrollment.Where(s => selectedCourses.Contains(s.courseId) && s.studentId == id).Select(s => s.courseId);
+                        IEnumerable<int> newEnrollments = selectedCourses.Where(s => !existEnrollments.Contains(s));
+
+                        foreach (int courseId in newEnrollments)
+                            _context.Enrollment.Add(new Enrollment { studentId = id, courseId = courseId, semester = viewmodel.semester, year = viewmodel.year });
+
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        IQueryable<Enrollment> toBeRemoved = _context.Enrollment.Where(s => s.studentId == id);
+                        _context.Enrollment.RemoveRange(toBeRemoved);
+                        await _context.SaveChangesAsync();
+                    }
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StudentExists(student.Id))
+                    if (!StudentExists(viewmodel.student.Id))
                     {
                         return NotFound();
                     }
@@ -139,7 +174,7 @@ namespace School_Management_System_Application.Models
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            return View(viewmodel);
         }
 
         // GET: Students/Delete/5
@@ -177,7 +212,7 @@ namespace School_Management_System_Application.Models
         }
 
         // GET: Students/StudentsEnrolled/5
-        public async Task<IActionResult> StudentsEnrolled(int? id)
+        public async Task<IActionResult> StudentsEnrolled(int? id, string? fullName, string? studentId)
         {
             if (id == null)
             {
@@ -187,15 +222,34 @@ namespace School_Management_System_Application.Models
             var course = await _context.Course
                 .FirstOrDefaultAsync(m => m.courseId == id);
             ViewBag.Message = course.title;
-            IQueryable<Student> studentQuery = _context.Enrollment.Where(x => x.courseId == id).Select(x => x.student);
+            IQueryable<Student> studentsQuery = _context.Enrollment.Where(x => x.courseId == id).Select(x => x.student);
             await _context.SaveChangesAsync();
             if (course == null)
             {
                 return NotFound();
             }
+
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                if (fullName.Contains(" "))
+                {
+                    string[] names = fullName.Split(" ");
+                    studentsQuery = studentsQuery.Where(x => x.firstName.Contains(names[0]) || x.lastName.Contains(names[1]) ||
+                    x.firstName.Contains(names[1]) || x.lastName.Contains(names[0]));
+                }
+                else
+                {
+                    studentsQuery = studentsQuery.Where(x => x.firstName.Contains(fullName) || x.lastName.Contains(fullName));
+                }
+            }
+            if (!string.IsNullOrEmpty(studentId))
+            {
+                studentsQuery = studentsQuery.Where(x => x.studentId.Contains(studentId));
+            }
+
             var studentFilterVM = new StudentFilter
             {
-                students = await studentQuery.ToListAsync(),
+                students = await studentsQuery.ToListAsync(),
             };
 
             return View(studentFilterVM);

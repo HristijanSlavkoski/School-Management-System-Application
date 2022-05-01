@@ -17,7 +17,7 @@ namespace School_Management_System_Application.Models
         public Student? student { get; set; }
 
         [Display(Name = "Semester")]
-        public int? semester { get; set; }
+        public string? semester { get; set; }
 
         [Display(Name = "Year")]
         public int? year { get; set; }

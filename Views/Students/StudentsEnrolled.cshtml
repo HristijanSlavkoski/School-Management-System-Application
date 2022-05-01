@@ -1,7 +1,7 @@
 ﻿@model School_Management_System_Application.ViewModels.StudentFilter
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "StudentsEnrolled";
 }
 
 <h1>Students enrolled to course "@ViewBag.Message"</h1>
@@ -10,7 +10,7 @@
     <a asp-action="Create">Create New</a>
 </p>
 
-<form asp-controller="Students" asp-action="Index" method="get">
+<form asp-controller="Students" asp-action="StudentsEnrolled" method="get">
     <p>
         First or last name: <input type="text" asp-for="fullName" />
         Student ID: <input type="text" asp-for="studentId" />

@@ -12,7 +12,7 @@ using School_Management_System_Application.Data;
 namespace School_Management_System_Application.Migrations
 {
     [DbContext(typeof(School_Management_System_ApplicationContext))]
-    [Migration("20220425113710_001")]
+    [Migration("20220429160418_001")]
     partial class _001
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,8 +96,8 @@ namespace School_Management_System_Application.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int?>("semester")
-                        .HasColumnType("int");
+                    b.Property<string>("semester")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("seminalPoints")
                         .HasColumnType("int");
@@ -152,6 +152,9 @@ namespace School_Management_System_Application.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("profilePicture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("studentId")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -195,6 +198,9 @@ namespace School_Management_System_Application.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<string>("profilePicture")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("teacherId");
 
                     b.ToTable("Teacher");
@@ -203,11 +209,11 @@ namespace School_Management_System_Application.Migrations
             modelBuilder.Entity("School_Management_System_Application.Models.Course", b =>
                 {
                     b.HasOne("School_Management_System_Application.Models.Teacher", "firstTeacher")
-                        .WithMany("coursesOne")
+                        .WithMany()
                         .HasForeignKey("firstTeacherId");
 
                     b.HasOne("School_Management_System_Application.Models.Teacher", "secondTeacher")
-                        .WithMany("coursesTwo")
+                        .WithMany()
                         .HasForeignKey("secondTeacherId");
 
                     b.Navigation("firstTeacher");
@@ -242,13 +248,6 @@ namespace School_Management_System_Application.Migrations
             modelBuilder.Entity("School_Management_System_Application.Models.Student", b =>
                 {
                     b.Navigation("enrollments");
-                });
-
-            modelBuilder.Entity("School_Management_System_Application.Models.Teacher", b =>
-                {
-                    b.Navigation("coursesOne");
-
-                    b.Navigation("coursesTwo");
                 });
 #pragma warning restore 612, 618
         }
