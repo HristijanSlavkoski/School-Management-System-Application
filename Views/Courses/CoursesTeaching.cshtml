@@ -6,7 +6,20 @@
 
 <h1>Details of courses teaching by @ViewBag.Message </h1>
 
-
+<form asp-controller="Courses" asp-action="CoursesTeaching" method="get">
+    <p>
+        Title: <input type="text" asp-for="title" />
+        Programme:
+        <select asp-for="programme" asp-items="Model.programmes">
+            <option value="">All</option>
+        </select>
+        Semester:
+        <select asp-for="semester" asp-items="Model.semesters">
+            <option value="">All</option>
+        </select>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
 <table class="table">
     <thead>
         <tr>

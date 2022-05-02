@@ -6,10 +6,6 @@
 
 <h1>Students enrolled to course "@ViewBag.Message"</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
 <form asp-controller="Students" asp-action="StudentsEnrolled" method="get">
     <p>
         First or last name: <input type="text" asp-for="fullName" />

@@ -227,7 +227,7 @@ namespace School_Management_System_Application.Controllers
 
 
         // GET: Courses/CoursesTeaching/5
-        public async Task<IActionResult> CoursesTeaching(int? id)
+        public async Task<IActionResult> CoursesTeaching(int? id, string title, int semester, string programme)
         {
             if (id == null)
             {
@@ -243,12 +243,28 @@ namespace School_Management_System_Application.Controllers
             {
                 return NotFound();
             }
-            var CourseTitleVM = new CourseFilter
+            IQueryable<int> semestersQuery = _context.Course.OrderBy(m => m.semester).Select(m => m.semester).Distinct();
+            IQueryable<string> programmesQuery = _context.Course.OrderBy(m => m.programme).Select(m => m.programme).Distinct();
+            if (!string.IsNullOrEmpty(title))
             {
-                courses = await coursesQuery.ToListAsync(),
+                coursesQuery = coursesQuery.Where(x => x.title.Contains(title));
+            }
+            if (semester != null && semester != 0)
+            {
+                coursesQuery = coursesQuery.Where(s => s.semester == semester);
+            }
+            if (!string.IsNullOrEmpty(programme))
+            {
+                coursesQuery = coursesQuery.Where(p => p.programme == programme);
+            }
+            var CourseFilterVM = new CourseFilter
+            {
+                courses = await coursesQuery.Include(c => c.firstTeacher).Include(c => c.secondTeacher).ToListAsync(),
+                programmes = new SelectList(await programmesQuery.ToListAsync()),
+                semesters = new SelectList(await semestersQuery.ToListAsync())
             };
 
-            return View(CourseTitleVM);
+            return View(CourseFilterVM);
         }
     }
 }
