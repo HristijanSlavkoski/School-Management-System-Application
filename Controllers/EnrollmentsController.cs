@@ -9,12 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using School_Management_System_Application.Data;
 using School_Management_System_Application.Models;
 using School_Management_System_Application.ViewModels;
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 
 namespace School_Management_System_Application.Controllers
 {
     public class EnrollmentsController : Controller
     {
         private readonly School_Management_System_ApplicationContext _context;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
         public EnrollmentsController(School_Management_System_ApplicationContext context)
         {
@@ -209,8 +211,8 @@ namespace School_Management_System_Application.Controllers
         }
 
         //THIS IS FOR TEACHER ROLE
-        // GET: Enrollments/EditTeacher/5
-        public async Task<IActionResult> EditTeacher(long? id, string teacher)
+        // GET: Enrollments/EditAsTeacher/5
+        public async Task<IActionResult> EditAsTeacher(long? id, string teacher)
         {
             if (id == null)
             {
@@ -229,12 +231,12 @@ namespace School_Management_System_Application.Controllers
         }
 
         //THIS IS FOR TEACHER ROLE
-        // POST: Enrollments/EditTeacher/5
+        // POST: Enrollments/EditAsTeacher/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditTeacher(long id, string teacher, [Bind("enrollmentId,courseId,studentId,semester,year,grade,seminalUrl,projectUrl,examPoints,seminalPoints,projectPoints,additionalPoints,finishDate")] Enrollment enrollment)
+        public async Task<IActionResult> EditAsTeacher(long id, string teacher, [Bind("enrollmentId,courseId,studentId,semester,year,grade,seminalUrl,projectUrl,examPoints,seminalPoints,projectPoints,additionalPoints,finishDate")] Enrollment enrollment)
         {
             if (id != enrollment.enrollmentId)
             {
@@ -260,11 +262,136 @@ namespace School_Management_System_Application.Controllers
                     }
                 }
                 return RedirectToAction("StudentsEnrolledAtCourse", new { id = enrollment.courseId, teacher = temp, year = enrollment.year });
-                //return RedirectToAction(nameof(StudentsEnrolledAtCourse(enrollment.courseId, teacher, (Int32)enrollment.year)));
             }
             ViewData["courseId"] = new SelectList(_context.Course, "courseId", "title", enrollment.courseId);
             ViewData["studentId"] = new SelectList(_context.Student, "Id", "firstName", enrollment.studentId);
             return View(enrollment);
+        }
+
+        //THIS IS FOR STUDENT ROLE
+        // GET: Enrollments/StudentCourses/5
+        public async Task<IActionResult> StudentCourses(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var student = await _context.Student
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            ViewBag.student = student.fullName;
+
+            IQueryable<Enrollment> enrollment = _context.Enrollment.Where(x => x.studentId==id)
+            .Include(e => e.course)
+            .Include(e => e.student);
+            await _context.SaveChangesAsync();
+
+            if (enrollment == null)
+            {
+                return NotFound();
+            }
+
+            return View(await enrollment.ToListAsync());
+        }
+
+        //THIS IS FOR STUDENT ROLE
+        // GET: Enrollments/EditAsTeacher/5
+        public async Task<IActionResult> EditAsStudent(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var enrollment = _context.Enrollment.Where(m => m.enrollmentId == id).Include(x => x.student).Include(x => x.course).First();
+            IQueryable<Enrollment> enrollmentQuery = _context.Enrollment.AsQueryable();
+            enrollmentQuery = enrollmentQuery.Where(m => m.enrollmentId == id);
+            if (enrollment == null)
+            {
+                return NotFound();
+            }
+
+            EditAsStudentViewModel viewmodel = new EditAsStudentViewModel
+            {
+                enrollment = await enrollmentQuery.Include(x => x.student).Include(x => x.course).FirstAsync(),
+                seminalUrlName = enrollment.seminalUrl
+            };
+            ViewData["courseId"] = new SelectList(_context.Course, "courseId", "title", enrollment.courseId);
+            ViewData["studentId"] = new SelectList(_context.Student, "Id", "firstName", enrollment.studentId);
+            return View(viewmodel);
+        }
+
+        //THIS IS FOR STUDENT ROLE
+        // POST: Enrollments/EditAsTeacher/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAsStudent(long id, EditAsStudentViewModel viewmodel)
+        {
+            if (id != viewmodel.enrollment.enrollmentId)
+            {
+                return NotFound();
+            }
+            
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    
+                    if(viewmodel.seminalUrlFile!=null)
+                    {
+                        string uniqueFileName = UploadedFile(viewmodel);
+                        viewmodel.enrollment.seminalUrl = uniqueFileName;
+                    }
+                    else
+                    {
+                        viewmodel.enrollment.seminalUrl = viewmodel.seminalUrlName;
+                    }
+                    
+                    _context.Update(viewmodel.enrollment);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EnrollmentExists(viewmodel.enrollment.enrollmentId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("StudentCourses", new { id = viewmodel.enrollment.studentId});
+            }
+
+            ViewData["courseId"] = new SelectList(_context.Course, "courseId", "title", viewmodel.enrollment.courseId);
+            ViewData["studentId"] = new SelectList(_context.Student, "Id", "firstName", viewmodel.enrollment.studentId);
+            return View(viewmodel);
+        }
+
+        private string UploadedFile(EditAsStudentViewModel viewmodel)
+        {
+            string uniqueFileName = null;
+
+            if (viewmodel.seminalUrlFile != null)
+            {
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/seminals");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(viewmodel.seminalUrlFile.FileName);
+                string fileNameWithPath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    viewmodel.seminalUrlFile.CopyTo(stream);
+                }
+            }
+            return uniqueFileName;
         }
     }
 }

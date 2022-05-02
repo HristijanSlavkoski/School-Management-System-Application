@@ -1,67 +1,58 @@
-﻿@model School_Management_System_Application.ViewModels.EnrollmentFilter
+﻿@model IEnumerable<School_Management_System_Application.Models.Enrollment>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "StudentCourses";
 }
 
-<h1>Enrolled students at "@ViewBag.course" from teacher "@ViewBag.teacher"</h1>
-
-<form asp-controller="Enrollments" asp-action="StudentsEnrolledAtCourse" asp-route-teacher="@ViewBag.teacher">
-    <p>
-        Year: <select asp-for="year" asp-items="Model.yearsList">
-            <option>Select year</option>
-        </select>
-        <input type="submit" value="Filter" />
-    </p>
-</form>
+<h1>@ViewBag.student's courses:</h1>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].course)
+                @Html.DisplayNameFor(model => model.course)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].student)
+                @Html.DisplayNameFor(model => model.student)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].semester)
+                @Html.DisplayNameFor(model => model.semester)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].year)
+                @Html.DisplayNameFor(model => model.year)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].grade)
+                @Html.DisplayNameFor(model => model.grade)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].seminalUrl)
+                @Html.DisplayNameFor(model => model.seminalUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].projectUrl)
+                @Html.DisplayNameFor(model => model.projectUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].examPoints)
+                @Html.DisplayNameFor(model => model.examPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].seminalPoints)
+                @Html.DisplayNameFor(model => model.seminalPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].projectPoints)
+                @Html.DisplayNameFor(model => model.projectPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].additionalPoints)
+                @Html.DisplayNameFor(model => model.additionalPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].totalPoints)
+                @Html.DisplayNameFor(model => model.totalPoints)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.enrollments[0].finishDate)
+                @Html.DisplayNameFor(model => model.finishDate)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.enrollments) {
+@foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.course.title)
@@ -79,10 +70,24 @@
                 @Html.DisplayFor(modelItem => item.grade)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.seminalUrl)
+                @if(@item.seminalUrl != null)
+                {    
+                        <a href="~/seminals/@item.seminalUrl">Open seminal file</a>
+                    }
+                    else
+                    {
+                        <span>No file uploaded</span>
+                    }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.projectUrl)
+                 @if(@item.projectUrl != null)
+                {    
+                        <a href="@item.projectUrl">Open project link</a>
+                    }
+                    else
+                    {
+                        <span>No link uploaded</span>
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.examPoints)
@@ -103,11 +108,7 @@
                 @Html.DisplayFor(modelItem => item.finishDate)
             </td>
             <td>
-                @if (item.finishDate == null)
-                {
-                    <a asp-action="EditAsTeacher" asp-route-id="@item.enrollmentId" asp-route-teacher="@ViewBag.teacher">Edit</a>
-                    <span> |</span>
-                }
+                <a asp-action="EditAsStudent" asp-route-id="@item.enrollmentId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.enrollmentId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.enrollmentId">Delete</a>
             </td>

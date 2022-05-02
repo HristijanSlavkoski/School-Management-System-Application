@@ -1,7 +1,7 @@
 ﻿@model School_Management_System_Application.Models.Enrollment
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "EditAsTeacher";
 }
 
 <h1>Edit</h1>
@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditTeacher" asp-route-teacher="@ViewBag.teacher">
+        <form asp-action="EditAsTeacher" asp-route-teacher="@ViewBag.teacher">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="enrollmentId" />
             <div class="form-group">
