@@ -43,6 +43,11 @@
                 <input asp-for="hireDate" class="form-control" />
                 <span asp-validation-for="hireDate" class="text-danger"></span>
             </div>
+            <div class="form-group" style="display:none">
+                <label asp-for="profilePicture" class="control-label"></label>
+                <input asp-for="profilePicture" class="form-control" readonly="@(true)">
+                <span asp-validation-for="profilePicture" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

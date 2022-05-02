@@ -1,4 +1,4 @@
-﻿@model School_Management_System_Application.Models.Student
+﻿@model School_Management_System_Application.ViewModels.EditPictureStudent
 
 @{
     ViewData["Title"] = "Details";
@@ -11,50 +11,60 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.studentId)
+           Profile picture:
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.studentId)
+            <img src="~/profilePictures/@Model.student.profilePicture"
+                class="rounded-circle"
+                height="40" width="40"
+                asp-append-version="true" />
+        </dd> 
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.student.studentId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.student.studentId)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.firstName)
+            @Html.DisplayNameFor(model => model.student.firstName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.firstName)
+            @Html.DisplayFor(model => model.student.firstName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.lastName)
+            @Html.DisplayNameFor(model => model.student.lastName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.lastName)
+            @Html.DisplayFor(model => model.student.lastName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.enrollmentDate)
+            @Html.DisplayNameFor(model => model.student.enrollmentDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.enrollmentDate)
+            @Html.DisplayFor(model => model.student.enrollmentDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.acquiredCredits)
+            @Html.DisplayNameFor(model => model.student.acquiredCredits)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.acquiredCredits)
+            @Html.DisplayFor(model => model.student.acquiredCredits)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.currentSemester)
+            @Html.DisplayNameFor(model => model.student.currentSemester)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.currentSemester)
+            @Html.DisplayFor(model => model.student.currentSemester)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.educationLevel)
+            @Html.DisplayNameFor(model => model.student.educationLevel)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.educationLevel)
+            @Html.DisplayFor(model => model.student.educationLevel)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="EditPicture" asp-route-id="@Model?.student.Id">Edit picture</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.student.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

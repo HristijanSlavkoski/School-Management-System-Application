@@ -64,7 +64,13 @@ namespace School_Management_System_Application.Models
                 return NotFound();
             }
 
-            return View(student);
+            EditPictureStudent viewmodel = new EditPictureStudent
+            {
+                student = student,
+                profilePictureName = student.profilePicture
+            };
+
+            return View(viewmodel);
         }
 
         // GET: Students/Create
@@ -253,6 +259,97 @@ namespace School_Management_System_Application.Models
             };
 
             return View(studentFilterVM);
+        }
+        // GET: Students/EditPicture/5
+        public async Task<IActionResult> EditPicture(long? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var student = _context.Student.Where(x => x.Id == id).Include(x => x.enrollments).First();
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            var courses = _context.Course.AsEnumerable();
+            courses = courses.OrderBy(s => s.title);
+
+            EditPictureStudent viewmodel = new EditPictureStudent
+            {
+                student = student,
+                profilePictureName = student.profilePicture
+            };
+
+            return View(viewmodel);
+        }
+
+        // POST: Students/EditPicture/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPicture(long id, EditPictureStudent viewmodel)
+        {
+            if (id != viewmodel.student.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (viewmodel.profilePictureFile != null)
+                    {
+                        string uniqueFileName = UploadedFile(viewmodel);
+                        viewmodel.student.profilePicture = uniqueFileName;
+                    }
+                    else
+                    {
+                        viewmodel.student.profilePicture = viewmodel.profilePictureName;
+                    }
+
+                    _context.Update(viewmodel.student);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentExists(viewmodel.student.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Details", new { id = viewmodel.student.Id });
+            }
+            return View(viewmodel);
+        }
+        private string UploadedFile(EditPictureStudent viewmodel)
+        {
+            string uniqueFileName = null;
+
+            if (viewmodel.profilePictureFile != null)
+            {
+                string uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/profilePictures");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(viewmodel.profilePictureFile.FileName);
+                string fileNameWithPath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(fileNameWithPath, FileMode.Create))
+                {
+                    viewmodel.profilePictureFile.CopyTo(stream);
+                }
+            }
+            return uniqueFileName;
         }
     }
 }

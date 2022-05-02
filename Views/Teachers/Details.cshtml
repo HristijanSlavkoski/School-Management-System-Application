@@ -1,4 +1,4 @@
-﻿@model School_Management_System_Application.Models.Teacher
+﻿@model School_Management_System_Application.ViewModels.EditPictureTeacher
 
 @{
     ViewData["Title"] = "Details";
@@ -11,44 +11,54 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.firstName)
+           Profile picture:
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.firstName)
+            <img src="~/profilePictures/@Model.teacher.profilePicture"
+                class="rounded-circle"
+                height="40" width="40"
+                asp-append-version="true" />
+        </dd> 
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.teacher.firstName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.teacher.firstName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.lastName)
+            @Html.DisplayNameFor(model => model.teacher.lastName)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.lastName)
+            @Html.DisplayFor(model => model.teacher.lastName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.degree)
+            @Html.DisplayNameFor(model => model.teacher.degree)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.degree)
+            @Html.DisplayFor(model => model.teacher.degree)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.academicRank)
+            @Html.DisplayNameFor(model => model.teacher.academicRank)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.academicRank)
+            @Html.DisplayFor(model => model.teacher.academicRank)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.officeNumber)
+            @Html.DisplayNameFor(model => model.teacher.officeNumber)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.officeNumber)
+            @Html.DisplayFor(model => model.teacher.officeNumber)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.hireDate)
+            @Html.DisplayNameFor(model => model.teacher.hireDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.hireDate)
+            @Html.DisplayFor(model => model.teacher.hireDate)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.teacherId">Edit</a> |
+    <a asp-action="EditPicture" asp-route-id="@Model?.teacher.teacherId">Edit picture</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.teacher.teacherId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

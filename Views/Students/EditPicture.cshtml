@@ -1,7 +1,7 @@
-﻿@model School_Management_System_Application.ViewModels.EnrollCoursesAtStudentEdit
+﻿@model School_Management_System_Application.ViewModels.EditPictureStudent
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "EditPicture";
 }
 
 <h1>Edit student</h1>
@@ -9,64 +9,56 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="EditPicture" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="student.Id" />
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="student.studentId" class="control-label"></label>
                 <input asp-for="student.studentId" class="form-control" />
                 <span asp-validation-for="student.studentId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="student.firstName" class="control-label"></label>
                 <input asp-for="student.firstName" class="form-control" />
                 <span asp-validation-for="student.firstName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="student.lastName" class="control-label"></label>
                 <input asp-for="student.lastName" class="form-control" />
                 <span asp-validation-for="student.lastName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none"
                 <label asp-for="student.enrollmentDate" class="control-label"></label>
                 <input asp-for="student.enrollmentDate" class="form-control" />
                 <span asp-validation-for="student.enrollmentDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="student.acquiredCredits" class="control-label"></label>
                 <input asp-for="student.acquiredCredits" class="form-control" />
                 <span asp-validation-for="student.acquiredCredits" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="student.currentSemester" class="control-label"></label>
                 <input asp-for="student.currentSemester" class="form-control" />
                 <span asp-validation-for="student.currentSemester" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display:none">
                 <label asp-for="student.educationLevel" class="control-label"></label>
                 <input asp-for="student.educationLevel" class="form-control" />
                 <span asp-validation-for="student.educationLevel" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="year" class="control-label"></label>
-                <input asp-for="year" class="form-control" />
-                <span asp-validation-for="year" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="semester" class="control-label"></label>
-                <input asp-for="semester" class="form-control" />
-                <span asp-validation-for="year" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Enrolled courses</label>
-                <select asp-for="selectedCourses" class ="form-control" asp-items="Model.coursesEnrolledList">
-                </select>
-                <span asp-validation-for="selectedCourses" class="text-danger"></span>
-            </div>
             <div class="form-group" style="display:none">
                 <label asp-for="student.profilePicture" class="control-label"></label>
-                <input asp-for="student.profilePicture" class="form-control" readonly="@(true)">
+                <input asp-for="profilePictureName" class="form-control" readonly="@(true)">
                 <span asp-validation-for="student.profilePicture" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="profilePictureFile" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="profilePictureFile" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile"></label>
+                </div>
+                <span asp-validation-for="profilePictureFile" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -76,16 +68,9 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Details">Back to Details</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#selectedCourses").select2();
-        });
-    </script>
 }
