@@ -44,13 +44,27 @@
             @Html.DisplayNameFor(model => model.seminalUrl)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.seminalUrl)
+            @if(@Model.projectUrl != null)
+            {    
+                <a href="@Model.projectUrl">Open project link</a>
+            }
+            else
+            {
+                <span>No link uploaded</span>
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.projectUrl)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.projectUrl)
+            @if(@Model.seminalUrl != null)
+            {    
+                <a href="~/seminals/@Model.seminalUrl">Open seminal file</a>
+            }
+            else
+            {
+                <span>No file uploaded</span>
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.examPoints)

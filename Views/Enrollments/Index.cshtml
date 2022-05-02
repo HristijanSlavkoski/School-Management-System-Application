@@ -73,10 +73,24 @@
                 @Html.DisplayFor(modelItem => item.grade)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.seminalUrl)
+                @if(@item.seminalUrl != null)
+                {    
+                        <a href="~/seminals/@item.seminalUrl">Open seminal file</a>
+                    }
+                    else
+                    {
+                        <span>No file uploaded</span>
+                    }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.projectUrl)
+                 @if(@item.projectUrl != null)
+                {    
+                        <a href="@item.projectUrl">Open project link</a>
+                    }
+                    else
+                    {
+                        <span>No link uploaded</span>
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.examPoints)
