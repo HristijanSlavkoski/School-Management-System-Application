@@ -181,10 +181,21 @@ namespace School_Management_System_Application.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var teacher = await _context.Teacher.FindAsync(id);
+            IQueryable<Course> courses = _context.Course.AsQueryable();
+            IQueryable<Course> courses1 = courses.Where(x => x.firstTeacherId == teacher.teacherId);
+            IQueryable<Course> courses2 = courses.Where(x => x.secondTeacherId == teacher.teacherId);
+            foreach (var course in courses1)
+            {
+                course.firstTeacherId = null;
+            }
+            foreach (var course in courses2)
+            {
+                course.secondTeacherId = null;
+            }
             _context.Teacher.Remove(teacher);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            return RedirectToAction(nameof(Index));  
+            }
 
         private bool TeacherExists(int id)
         {
