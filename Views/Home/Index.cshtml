@@ -4,9 +4,30 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome to the school management system by Hristijan Slavkoski</h1>
-    <p>You can check our <a asp-controller="Students" asp-action="Index">students</a>,
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <p>You can check our <a asp-controller="Students" asp-action="Index">students</a>,
         <a asp-controller="Teachers" asp-action="Index">teachers</a> and 
         <a asp-controller="Courses" asp-action="Index">courses</a>.
         Enjoy
         </p>
+    }
+    else if(User.Identity.IsAuthenticated && User.IsInRole("Teacher"))
+    {
+        <a asp-controller="Courses" asp-action="CoursesTeaching" asp-route-id="3">
+        @Html.Raw("<p> Check the courses you are teaching </p>")
+        </a>
+    }
+    else if(User.Identity.IsAuthenticated && User.IsInRole("Student"))
+    {
+        <a asp-controller="Enrollments" asp-action="StudentCourses" asp-route-id="3">
+        @Html.Raw("<p> Check the status of your courses</p>")
+        </a>
+    }
+    else
+    {
+        @Html.Raw("<p> Please ");
+        <a asp-area="Identity" asp-page="/Account/Login"/>
+        @Html.Raw("Login</a> for future opportunities</p>");
+    }
 </div>

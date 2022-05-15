@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Courses
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string title, int semester, string programme)
         {
             IQueryable<Course> coursesQuery = _context.Course.AsQueryable();
@@ -50,6 +52,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Courses/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -70,6 +73,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Courses/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["Teachers"] = new SelectList(_context.Set<Teacher>(), "teacherId", "fullName");
@@ -82,6 +86,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("courseId,title,credits,semester,programme,educationLevel,firstTeacherId,firstTeacher,secondTeacherId,secondTeacher,enrollments")] Course course)
         {
             if (ModelState.IsValid)
@@ -96,6 +101,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Courses/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -130,6 +136,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, EnrollStudentsAtCourseEdit viewmodel)
         {
             if (id != viewmodel.course.courseId)
@@ -192,6 +199,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Courses/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -212,6 +220,7 @@ namespace School_Management_System_Application.Controllers
         // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var course = await _context.Course.FindAsync(id);
@@ -227,6 +236,7 @@ namespace School_Management_System_Application.Controllers
 
 
         // GET: Courses/CoursesTeaching/5
+        [Authorize(Roles = "Admin,Teacher")]
         public async Task<IActionResult> CoursesTeaching(int? id, string title, int semester, string programme)
         {
             if (id == null)

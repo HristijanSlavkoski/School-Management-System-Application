@@ -41,9 +41,5 @@ namespace School_Management_System_Application.Models
                 return string.Format("{0} {1}", firstName, lastName);
             }
         }
-
-/*        public ICollection<Course> coursesOne { get; set; }
-
-        public ICollection<Course> coursesTwo { get; set; }*/
     }
 }

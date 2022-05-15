@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Enrollments
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var school_Management_System_ApplicationContext = _context.Enrollment.Include(e => e.course).Include(e => e.student);
@@ -31,6 +33,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Enrollments/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -51,6 +54,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Enrollments/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["courseId"] = new SelectList(_context.Course, "courseId", "title");
@@ -63,6 +67,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("enrollmentId,courseId,studentId,semester,year,grade,seminalUrl,projectUrl,examPoints,seminalPoints,projectPoints,additionalPoints,finishDate,student,course")] Enrollment enrollment)
         {
             if (ModelState.IsValid)
@@ -77,6 +82,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Enrollments/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -99,6 +105,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(long id, [Bind("enrollmentId,courseId,studentId,semester,year,grade,seminalUrl,projectUrl,examPoints,seminalPoints,projectPoints,additionalPoints,finishDate")] Enrollment enrollment)
         {
             if (id != enrollment.enrollmentId)
@@ -132,6 +139,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Enrollments/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -154,6 +162,7 @@ namespace School_Management_System_Application.Controllers
         // POST: Enrollments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var enrollment = await _context.Enrollment.FindAsync(id);
@@ -167,6 +176,7 @@ namespace School_Management_System_Application.Controllers
             return _context.Enrollment.Any(e => e.enrollmentId == id);
         }
         // GET: Enrollments/StudentsEnrolledAtCourse/5/MarijaStefanoska
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> StudentsEnrolledAtCourse(int? id, string teacher, int year)
         {
             if (id == null)
@@ -212,6 +222,7 @@ namespace School_Management_System_Application.Controllers
 
         //THIS IS FOR TEACHER ROLE
         // GET: Enrollments/EditAsTeacher/5
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> EditAsTeacher(long? id, string teacher)
         {
             if (id == null)
@@ -236,6 +247,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> EditAsTeacher(long id, string teacher, [Bind("enrollmentId,courseId,studentId,semester,year,grade,seminalUrl,projectUrl,examPoints,seminalPoints,projectPoints,additionalPoints,finishDate")] Enrollment enrollment)
         {
             if (id != enrollment.enrollmentId)
@@ -270,6 +282,7 @@ namespace School_Management_System_Application.Controllers
 
         //THIS IS FOR STUDENT ROLE
         // GET: Enrollments/StudentCourses/5
+        [Authorize(Roles = "Admin,Student")]
         public async Task<IActionResult> StudentCourses(int? id)
         {
             if (id == null)
@@ -297,6 +310,7 @@ namespace School_Management_System_Application.Controllers
 
         //THIS IS FOR STUDENT ROLE
         // GET: Enrollments/EditAsTeacher/5
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EditAsStudent(long? id)
         {
             if (id == null)
@@ -328,6 +342,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> EditAsStudent(long id, EditAsStudentViewModel viewmodel)
         {
             if (id != viewmodel.enrollment.enrollmentId)

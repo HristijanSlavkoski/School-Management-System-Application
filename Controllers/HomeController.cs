@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using School_Management_System_Application.Models;
 using System.Diagnostics;
 
@@ -27,6 +28,12 @@ namespace School_Management_System_Application.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult CreateUser()
+        {
+            return View();
         }
     }
 }

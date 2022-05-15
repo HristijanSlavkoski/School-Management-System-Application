@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Teachers
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string fullName, string academicrank, string degree)
         {
 
@@ -61,6 +63,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Teachers/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -85,6 +88,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Teachers/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -95,6 +99,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("teacherId,firstName,lastName,degree,academicRank,officeNumber,hireDate")] Teacher teacher)
         {
             if (ModelState.IsValid)
@@ -107,6 +112,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Teachers/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -127,6 +133,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("teacherId,firstName,lastName,degree,academicRank,officeNumber,hireDate,profilePicture")] Teacher teacher)
         {
             if (id != teacher.teacherId)
@@ -158,6 +165,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Teachers/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -178,6 +186,7 @@ namespace School_Management_System_Application.Controllers
         // POST: Teachers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var teacher = await _context.Teacher.FindAsync(id);
@@ -202,6 +211,7 @@ namespace School_Management_System_Application.Controllers
             return _context.Teacher.Any(e => e.teacherId == id);
         }
         // GET: Teachers/EditPicture/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditPicture(long? id)
         {
             if (id == null)
@@ -229,6 +239,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditPicture(long id, EditPictureTeacher viewmodel)
         {
             if (id != viewmodel.teacher.teacherId)

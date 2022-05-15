@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,7 @@ namespace School_Management_System_Application.Models
         }
 
         // GET: Students
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index(string fullName, string studentId)
         {
             IQueryable<Student> studentsQuery = _context.Student.AsQueryable();
@@ -50,6 +52,7 @@ namespace School_Management_System_Application.Models
         }
 
         // GET: Students/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -74,6 +77,7 @@ namespace School_Management_System_Application.Models
         }
 
         // GET: Students/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["Courses"] = new SelectList(_context.Set<Course>(), "courseId", "title");
@@ -85,6 +89,7 @@ namespace School_Management_System_Application.Models
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,studentId,firstName,lastName,enrollmentDate,acquiredCredits,currentSemester,educationLevel,enrollments")] Student student)
         {
             if (ModelState.IsValid)
@@ -97,6 +102,7 @@ namespace School_Management_System_Application.Models
         }
 
         // GET: Students/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -129,6 +135,7 @@ namespace School_Management_System_Application.Models
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long id, EnrollCoursesAtStudentEdit viewmodel)
         {
             if (id != viewmodel.student.Id)
@@ -184,6 +191,7 @@ namespace School_Management_System_Application.Models
         }
 
         // GET: Students/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -204,6 +212,7 @@ namespace School_Management_System_Application.Models
         // POST: Students/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var student = await _context.Student.FindAsync(id);
@@ -218,6 +227,7 @@ namespace School_Management_System_Application.Models
         }
 
         // GET: Students/StudentsEnrolled/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> StudentsEnrolled(int? id, string? fullName, string? studentId)
         {
             if (id == null)
@@ -261,6 +271,7 @@ namespace School_Management_System_Application.Models
             return View(studentFilterVM);
         }
         // GET: Students/EditPicture/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditPicture(long? id)
         {
             if (id == null)
@@ -291,6 +302,7 @@ namespace School_Management_System_Application.Models
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditPicture(long id, EditPictureStudent viewmodel)
         {
             if (id != viewmodel.student.Id)
