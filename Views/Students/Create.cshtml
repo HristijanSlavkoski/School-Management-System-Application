@@ -46,13 +46,13 @@
                 <input asp-for="educationLevel" class="form-control" />
                 <span asp-validation-for="educationLevel" class="text-danger"></span>
             </div>
-           <div class="form-group">
+@*           <div class="form-group">
                 <label asp-for="enrollments" class="control-label">Enrolled courses</label>
                 <select asp-for="enrollments" class ="form-control" asp-items="ViewBag.Courses" SelectionMode="Multiple">
                     <option value="">Select</option>
                 </select>
                 <span asp-validation-for="enrollments" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -61,7 +61,8 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+  @*  <a asp-action="Index">Back to List</a>*@
+  <a href="javascript:void(0);" onclick="history.go(-1);">Go back</a>
 </div>
 
 @section Scripts {

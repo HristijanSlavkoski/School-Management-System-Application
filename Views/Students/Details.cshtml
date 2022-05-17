@@ -64,7 +64,13 @@
     </dl>
 </div>
 <div>
-    <a asp-action="EditPicture" asp-route-id="@Model?.student.Id">Edit picture</a> |
-    <a asp-action="Edit" asp-route-id="@Model?.student.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {            
+    <a asp-action="EditPicture" asp-route-id="@Model?.student.Id">Edit picture</a>
+    @Html.Raw("|");
+    <a asp-action="Edit" asp-route-id="@Model?.student.Id">Edit</a>
+    @Html.Raw("|");
+    //<a asp-action="Index">Back to List</a>
+    <a href="javascript:void(0);" onclick="history.go(-1);">Go back</a>
+    }
 </div>

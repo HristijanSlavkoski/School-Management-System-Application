@@ -30,12 +30,45 @@ namespace School_Management_System_Application.Models
             //Add Teacher Role
             roleCheck = await RoleManager.RoleExistsAsync("Teacher");
             if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Teacher")); }
-            user = await UserManager.FindByEmailAsync("teacher@school.com");
+            user = await UserManager.FindByEmailAsync("simeon.milenkoski@school.com");
             if (user == null)
             {
                 var User = new User();
-                User.Email = "teacher@school.com";
-                User.UserName = "teacher@school.com";
+                User.Email = "simeon.milenkoski@school.com";
+                User.UserName = "simeon.milenkoski@school.com";
+                string userPWD = "Teacher123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Teacher
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Teacher"); }
+            }
+            user = await UserManager.FindByEmailAsync("katerina.stojkoska@school.com");
+            if (user == null)
+            {
+                var User = new User();
+                User.Email = "katerina.stojkoska@school.com";
+                User.UserName = "katerina.stojkoska@school.com";
+                string userPWD = "Teacher123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Teacher
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Teacher"); }
+            }
+            user = await UserManager.FindByEmailAsync("bojan.nedelkoski@school.com");
+            if (user == null)
+            {
+                var User = new User();
+                User.Email = "bojan.nedelkoski@school.com";
+                User.UserName = "bojan.nedelkoski@school.com";
+                string userPWD = "Teacher123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Teacher
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Teacher"); }
+            }
+            user = await UserManager.FindByEmailAsync("nebojsha.ilijoski@school.com");
+            if (user == null)
+            {
+                var User = new User();
+                User.Email = "nebojsha.ilijoski@school.com";
+                User.UserName = "nebojsha.ilijoski@school.com";
                 string userPWD = "Teacher123";
                 IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
                 //Add default User to Role Teacher
@@ -44,12 +77,56 @@ namespace School_Management_System_Application.Models
             //Add Student Role
             roleCheck = await RoleManager.RoleExistsAsync("Student");
             if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Student")); }
-            user = await UserManager.FindByEmailAsync("student@school.com");
+            user = await UserManager.FindByEmailAsync("stojan.stojanoski@school.com");
             if (user == null)
             {
                 var User = new User();
-                User.Email = "student@school.com";
-                User.UserName = "student@school.com";
+                User.Email = "stojan.stojanoski@school.com";
+                User.UserName = "stojan.stojanoski@school.com";
+                string userPWD = "Student123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Student
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Student"); }
+            }
+            user = await UserManager.FindByEmailAsync("dimitar.dimitrijoski@school.com");
+            if (user == null)
+            {
+                var User = new User();
+                User.Email = "dimitar.dimitrijoski@school.com";
+                User.UserName = "dimitar.dimitrijoski@school.com";
+                string userPWD = "Student123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Student
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Student"); }
+            }
+            user = await UserManager.FindByEmailAsync("marija.mitreska@school.com");
+            if (user == null)
+            {
+                var User = new User();
+                User.Email = "marija.mitreska@school.com";
+                User.UserName = "marija.mitreska@school.com";
+                string userPWD = "Student123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Student
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Student"); }
+            }
+            user = await UserManager.FindByEmailAsync("petar.petreski@school.com");
+            if (user == null)
+            {
+                var User = new User();
+                User.Email = "petar.petreski@school.com";
+                User.UserName = "petar.petreski@school.com";
+                string userPWD = "Student123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Student
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Student"); }
+            }
+            user = await UserManager.FindByEmailAsync("ilina.naumoska@school.com");
+            if (user == null)
+            {
+                var User = new User();
+                User.Email = "ilina.naumoska@school.com";
+                User.UserName = "ilina.naumoska@school.com";
                 string userPWD = "Student123";
                 IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
                 //Add default User to Role Student
@@ -80,7 +157,8 @@ namespace School_Management_System_Application.Models
                         enrollmentDate = DateTime.Parse("2019-4-20"),
                         acquiredCredits = 30,
                         currentSemester = 2,
-                        educationLevel = "Bachelor's Degree"
+                        educationLevel = "Bachelor's Degree",
+                        userIdentityId = context.Users.Single(x => x.Email == "stojan.stojanoski@school.com").Id
                     },
                     new Student
                     {
@@ -90,7 +168,8 @@ namespace School_Management_System_Application.Models
                         enrollmentDate = DateTime.Parse("2019-7-11"),
                         acquiredCredits = 14,
                         currentSemester = 2,
-                        educationLevel = "Bachelor's Degree"
+                        educationLevel = "Bachelor's Degree",
+                        userIdentityId = context.Users.Single(x => x.Email == "dimitar.dimitrijoski@school.com").Id
                     },
                     new Student
                     {
@@ -100,7 +179,8 @@ namespace School_Management_System_Application.Models
                         enrollmentDate = DateTime.Parse("2020-2-4"),
                         acquiredCredits = 142,
                         currentSemester = 5,
-                        educationLevel = "Bachelor's Degree"
+                        educationLevel = "Bachelor's Degree",
+                        userIdentityId = context.Users.Single(x => x.Email == "petar.petreski@school.com").Id
                     },
                     new Student
                     {
@@ -110,7 +190,8 @@ namespace School_Management_System_Application.Models
                         enrollmentDate = DateTime.Parse("2022-10-23"),
                         acquiredCredits = 210,
                         currentSemester = 8,
-                        educationLevel = "Bachelor's Degree"
+                        educationLevel = "Bachelor's Degree",
+                        userIdentityId = context.Users.Single(x => x.Email == "marija.mitreska@school.com").Id
                     },
                     new Student
                     {
@@ -120,7 +201,8 @@ namespace School_Management_System_Application.Models
                         enrollmentDate = DateTime.Parse("2021-1-20"),
                         acquiredCredits = 78,
                         currentSemester = 3,
-                        educationLevel = "Bachelor's Degree"
+                        educationLevel = "Bachelor's Degree",
+                        userIdentityId = context.Users.Single(x => x.Email == "ilina.naumoska@school.com").Id
                     }
                 );
                 context.Teacher.AddRange(
@@ -131,7 +213,8 @@ namespace School_Management_System_Application.Models
                         degree = "Ph.D.",
                         academicRank = "Full Professor",
                         officeNumber = "223",
-                        hireDate = DateTime.Parse("2002-3-20")
+                        hireDate = DateTime.Parse("2002-3-20"),
+                        userIdentityId = context.Users.Single(x => x.Email == "simeon.milenkoski@school.com").Id
                     },
                     new Teacher
                     {
@@ -140,7 +223,8 @@ namespace School_Management_System_Application.Models
                         degree = "Master's degree",
                         academicRank = "Assistant Professor",
                         officeNumber = "211",
-                        hireDate = DateTime.Parse("2010-2-11")
+                        hireDate = DateTime.Parse("2010-2-11"),
+                        userIdentityId = context.Users.Single(x => x.Email == "katerina.stojkoska@school.com").Id
                     },
                     new Teacher
                     {
@@ -149,7 +233,8 @@ namespace School_Management_System_Application.Models
                         degree = "Ph.D.",
                         academicRank = "Full Professor",
                         officeNumber = "102",
-                        hireDate = DateTime.Parse("1998-1-11")
+                        hireDate = DateTime.Parse("1998-1-11"),
+                        userIdentityId = context.Users.Single(x => x.Email == "bojan.nedelkoski@school.com").Id
                     },
                     new Teacher
                     {
@@ -158,7 +243,8 @@ namespace School_Management_System_Application.Models
                         degree = "Master's degree",
                         academicRank = "Assistant Professor",
                         officeNumber = "204A",
-                        hireDate = DateTime.Parse("2016-4-8")
+                        hireDate = DateTime.Parse("2016-4-8"),
+                        userIdentityId = context.Users.Single(x => x.Email == "nebojsha.ilijoski@school.com").Id
                     }
                 );
                 context.SaveChanges();
@@ -266,7 +352,7 @@ namespace School_Management_System_Application.Models
                         courseId = context.Course.Single(d => d.title == "OWEB").courseId,
                         studentId = context.Student.Single(d => d.firstName == "Ilina" && d.lastName == "Naumoska").Id,
                         semester = "zimski",
-                        year = 2021,
+                        year = 2020,
                         grade = 9,
                         seminalUrl = "github",
                         projectUrl = "github",
@@ -281,7 +367,7 @@ namespace School_Management_System_Application.Models
                         courseId = context.Course.Single(d => d.title == "Matematika 1").courseId,
                         studentId = context.Student.Single(d => d.firstName == "Marija" && d.lastName == "Mitreska").Id,
                         semester = "zimski",
-                        year = 2021,
+                        year = 2019,
                         grade = 5,
                         seminalUrl = "github",
                         projectUrl = "github",

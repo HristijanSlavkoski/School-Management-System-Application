@@ -14,13 +14,15 @@
     }
     else if(User.Identity.IsAuthenticated && User.IsInRole("Teacher"))
     {
-        <a asp-controller="Courses" asp-action="CoursesTeaching" asp-route-id="3">
+        int id = ViewBag.userLoggedInId;
+        <a asp-controller="Courses" asp-action="CoursesTeaching" asp-route-id="@id">
         @Html.Raw("<p> Check the courses you are teaching </p>")
         </a>
     }
     else if(User.Identity.IsAuthenticated && User.IsInRole("Student"))
     {
-        <a asp-controller="Enrollments" asp-action="StudentCourses" asp-route-id="3">
+        int id = ViewBag.userLoggedInId;
+        <a asp-controller="Enrollments" asp-action="StudentCourses" asp-route-id="@id">
         @Html.Raw("<p> Check the status of your courses</p>")
         </a>
     }

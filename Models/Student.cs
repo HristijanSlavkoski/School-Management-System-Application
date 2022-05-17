@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using School_Management_System_Application.Areas.Identity.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace School_Management_System_Application.Models
 {
@@ -46,5 +47,9 @@ namespace School_Management_System_Application.Models
                 return string.Format("{0} {1}", firstName, lastName);
             }
         }
+
+        public string? userIdentityId { get; set; }
+
+        public User? userIdentity { get; set; }
     }
 }

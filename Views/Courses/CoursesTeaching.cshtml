@@ -69,11 +69,20 @@
                      </a>
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.courseId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.courseId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.courseId">Delete</a>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                     {
+                         <a asp-action="Edit" asp-route-id="@item.courseId">Edit</a>
+                         @Html.Raw("|");
+                     }
+                    <a asp-action="Details" asp-route-id="@item.courseId">Details</a>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                     {
+                         @Html.Raw("|");
+                          <a asp-action="Delete" asp-route-id="@item.courseId">Delete</a>
+                     }
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<a href="javascript:void(0);" onclick="history.go(-1);">Go back</a>

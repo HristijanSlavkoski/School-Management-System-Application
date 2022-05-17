@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using School_Management_System_Application.Areas.Identity.Data;
 using School_Management_System_Application.Data;
 using Microsoft.EntityFrameworkCore;
+using School_Management_System_Application.Models;
 
 namespace School_Management_System_Application.Areas.Identity.Pages.Account
 {
@@ -119,7 +120,6 @@ namespace School_Management_System_Application.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-
                     _logger.LogInformation("User logged in.");
                     User user = await _context.Users.FirstOrDefaultAsync(m => m.Email == Input.Email);
                     IQueryable<string> roleIdQuery = _context.UserRoles.Where(x => x.UserId == user.Id).Select(x => x.RoleId).AsQueryable();
@@ -127,11 +127,24 @@ namespace School_Management_System_Application.Areas.Identity.Pages.Account
                     IQueryable<string> roleQuery = _context.Roles.Where(x => x.Id == roleId).Select(x => x.Name).AsQueryable();
                     string role = roleQuery.FirstOrDefault();
                     if (role == "Admin")
+                    {
+                        HttpContext.Session.SetString("UserLoggedIn", "Admin");
                         return LocalRedirect("/Home");
+                    }  
                     else if (role == "Student")
-                        return LocalRedirect("/Enrollments/StudentCourses/3");
+                    {
+                        Student student = await _context.Student.FirstOrDefaultAsync(m => m.userIdentityId == user.Id);
+                        HttpContext.Session.SetString("UserLoggedIn", student.Id.ToString());
+                        string url = "/Enrollments/StudentCourses/" + student.Id;
+                        return LocalRedirect(url);
+                    }
                     else if (role == "Teacher")
-                        return LocalRedirect("/Courses/CoursesTeaching/3");
+                    {
+                        Teacher teacher = await _context.Teacher.FirstOrDefaultAsync(m => m.userIdentityId == user.Id);
+                        HttpContext.Session.SetString("UserLoggedIn", teacher.teacherId.ToString());
+                        string url = "/Courses/CoursesTeaching/" + teacher.teacherId;
+                        return LocalRedirect(url);
+                    }
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

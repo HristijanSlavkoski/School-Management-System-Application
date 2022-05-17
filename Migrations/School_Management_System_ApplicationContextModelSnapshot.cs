@@ -356,7 +356,12 @@ namespace School_Management_System_Application.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<string>("userIdentityId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("userIdentityId");
 
                     b.ToTable("Student");
                 });
@@ -397,7 +402,12 @@ namespace School_Management_System_Application.Migrations
                     b.Property<string>("profilePicture")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("userIdentityId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("teacherId");
+
+                    b.HasIndex("userIdentityId");
 
                     b.ToTable("Teacher");
                 });
@@ -485,6 +495,24 @@ namespace School_Management_System_Application.Migrations
                     b.Navigation("course");
 
                     b.Navigation("student");
+                });
+
+            modelBuilder.Entity("School_Management_System_Application.Models.Student", b =>
+                {
+                    b.HasOne("School_Management_System_Application.Areas.Identity.Data.User", "userIdentity")
+                        .WithMany()
+                        .HasForeignKey("userIdentityId");
+
+                    b.Navigation("userIdentity");
+                });
+
+            modelBuilder.Entity("School_Management_System_Application.Models.Teacher", b =>
+                {
+                    b.HasOne("School_Management_System_Application.Areas.Identity.Data.User", "userIdentity")
+                        .WithMany()
+                        .HasForeignKey("userIdentityId");
+
+                    b.Navigation("userIdentity");
                 });
 
             modelBuilder.Entity("School_Management_System_Application.Models.Course", b =>

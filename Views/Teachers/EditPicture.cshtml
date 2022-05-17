@@ -62,7 +62,8 @@
 </div>
 
 <div>
-    <a asp-action="Details">Back to Details</a>
+    @*<a asp-action="Details">Back to Details</a>*@
+    <a href="javascript:void(0);" onclick="history.go(-1);">Go back</a>
 </div>
 
 @section Scripts {

@@ -47,7 +47,6 @@ namespace School_Management_System_Application.Controllers
                 programmes = new SelectList(await programmesQuery.ToListAsync()),
                 semesters = new SelectList(await semestersQuery.ToListAsync())
             };
-
             return View(CoursefilterVM);
         }
 
@@ -243,7 +242,11 @@ namespace School_Management_System_Application.Controllers
             {
                 return NotFound();
             }
-
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != id.ToString() && userLoggedInId != "Admin")
+            {
+                return Forbid();
+            }
             var teacher = await _context.Teacher
                 .FirstOrDefaultAsync(m => m.teacherId == id);
             ViewBag.Message = teacher.fullName;

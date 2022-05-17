@@ -82,7 +82,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         // GET: Enrollments/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -105,7 +105,7 @@ namespace School_Management_System_Application.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long id, [Bind("enrollmentId,courseId,studentId,semester,year,grade,seminalUrl,projectUrl,examPoints,seminalPoints,projectPoints,additionalPoints,finishDate")] Enrollment enrollment)
         {
             if (id != enrollment.enrollmentId)
@@ -176,19 +176,23 @@ namespace School_Management_System_Application.Controllers
             return _context.Enrollment.Any(e => e.enrollmentId == id);
         }
         // GET: Enrollments/StudentsEnrolledAtCourse/5/MarijaStefanoska
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher, Admin")]
         public async Task<IActionResult> StudentsEnrolledAtCourse(int? id, string teacher, int year)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
             var course = await _context.Course
                 .FirstOrDefaultAsync(m => m.courseId == id);
 
             string[] names = teacher.Split(" ");
             var teacherModel = await _context.Teacher.FirstOrDefaultAsync(m => m.firstName == names[0] && m.lastName == names[1]);
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != teacherModel.teacherId.ToString() && userLoggedInId != "Admin")
+            {
+                return Forbid();
+            }
             ViewBag.teacher = teacher;
             ViewBag.course = course.title;
             var enrollment = _context.Enrollment.Where(x => x.courseId == id && (x.course.firstTeacherId == teacherModel.teacherId || x.course.secondTeacherId == teacherModel.teacherId))
@@ -205,12 +209,12 @@ namespace School_Management_System_Application.Controllers
             {
                 enrollmentQuery = enrollmentQuery.Where(x => x.year == yearsQuery.Max());
             }
-            
+
             if (enrollment == null)
             {
                 return NotFound();
             }
-            
+
             EnrollmentFilter viewmodel = new EnrollmentFilter
             {
                 enrollments = await enrollmentQuery.ToListAsync(),
@@ -229,7 +233,13 @@ namespace School_Management_System_Application.Controllers
             {
                 return NotFound();
             }
-
+            string[] names = teacher.Split(" ");
+            var teacherModel = await _context.Teacher.FirstOrDefaultAsync(m => m.firstName == names[0] && m.lastName == names[1]);
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != teacherModel.teacherId.ToString())
+            {
+                return Forbid();
+            }
             var enrollment = await _context.Enrollment.FindAsync(id);
             if (enrollment == null)
             {
@@ -255,6 +265,13 @@ namespace School_Management_System_Application.Controllers
                 return NotFound();
             }
             string temp = teacher;
+            string[] names = teacher.Split(" ");
+            var teacherModel = await _context.Teacher.FirstOrDefaultAsync(m => m.firstName == names[0] && m.lastName == names[1]);
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != teacherModel.teacherId.ToString())
+            {
+                return Forbid();
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -289,7 +306,11 @@ namespace School_Management_System_Application.Controllers
             {
                 return NotFound();
             }
-
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != id.ToString() && userLoggedInId != "Admin")
+            {
+                return Forbid();
+            }
             var student = await _context.Student
                 .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -309,7 +330,7 @@ namespace School_Management_System_Application.Controllers
         }
 
         //THIS IS FOR STUDENT ROLE
-        // GET: Enrollments/EditAsTeacher/5
+        // GET: Enrollments/EditAsStudent/5
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> EditAsStudent(long? id)
         {
@@ -317,7 +338,6 @@ namespace School_Management_System_Application.Controllers
             {
                 return NotFound();
             }
-
             var enrollment = _context.Enrollment.Where(m => m.enrollmentId == id).Include(x => x.student).Include(x => x.course).First();
             IQueryable<Enrollment> enrollmentQuery = _context.Enrollment.AsQueryable();
             enrollmentQuery = enrollmentQuery.Where(m => m.enrollmentId == id);
@@ -333,6 +353,11 @@ namespace School_Management_System_Application.Controllers
             };
             ViewData["courseId"] = new SelectList(_context.Course, "courseId", "title", enrollment.courseId);
             ViewData["studentId"] = new SelectList(_context.Student, "Id", "firstName", enrollment.studentId);
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != viewmodel.enrollment.studentId.ToString())
+            {
+                return Forbid();
+            }
             return View(viewmodel);
         }
 
@@ -349,7 +374,11 @@ namespace School_Management_System_Application.Controllers
             {
                 return NotFound();
             }
-            
+            var userLoggedInId = HttpContext.Session.GetString("UserLoggedIn");
+            if (userLoggedInId != viewmodel.enrollment.studentId.ToString())
+            {
+                return Forbid();
+            }
             if (ModelState.IsValid)
             {
                 try

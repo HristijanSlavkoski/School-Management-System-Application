@@ -112,10 +112,15 @@
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.enrollmentId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.enrollmentId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.enrollmentId">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.enrollmentId">Details</a> 
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                 {
+                     @Html.Raw("|");
+                     <a asp-action="Delete" asp-route-id="@item.enrollmentId">Delete</a>
+                 }
             </td>
         </tr>
 }
     </tbody>
 </table>
+<a href="javascript:void(0);" onclick="history.go(-1);">Go back</a>

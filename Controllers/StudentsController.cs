@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using School_Management_System_Application.Areas.Identity.Data;
 using School_Management_System_Application.Data;
 using School_Management_System_Application.ViewModels;
 
@@ -15,10 +17,11 @@ namespace School_Management_System_Application.Models
     public class StudentsController : Controller
     {
         private readonly School_Management_System_ApplicationContext _context;
-
-        public StudentsController(School_Management_System_ApplicationContext context)
+        private UserManager<User> _userManager;
+        public StudentsController(School_Management_System_ApplicationContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Students
@@ -94,6 +97,14 @@ namespace School_Management_System_Application.Models
         {
             if (ModelState.IsValid)
             {
+                var User = new User();
+                User.Email = student.firstName.ToLower() + "." +student.lastName.ToLower() + "@school.com";
+                User.UserName = student.firstName.ToLower() + "." + student.lastName.ToLower() + "@school.com";
+                string userPWD = "Student123";
+                IdentityResult chkUser = await _userManager.CreateAsync(User, userPWD);
+                //Add default User to Role Admin
+                if (chkUser.Succeeded) { var result1 = await _userManager.AddToRoleAsync(User, "Student"); }
+                student.userIdentityId = User.Id;
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
