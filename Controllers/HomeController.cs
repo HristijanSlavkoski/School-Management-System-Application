@@ -16,7 +16,10 @@ namespace School_Management_System_Application.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.userLoggedInId = Convert.ToInt32(HttpContext.Session.GetString("UserLoggedIn"));
+            if (HttpContext.Session.GetString("UserLoggedIn") != "Admin")
+            {
+                ViewBag.userLoggedInId = Convert.ToInt32(HttpContext.Session.GetString("UserLoggedIn"));
+            }
             return View();
         }
 
